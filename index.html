@@ -1,0 +1,338 @@
+<html>
+<head>
+  <base href="https://websim/qr-code-app/" />
+  <title>BF Générateur de Code QR - Version 1.0</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="BF Générateur de Code QR - Créez des QR codes personnalisés pour votre entreprise ou site web. Rapide, gratuit et facile à utiliser.">
+  <meta name="keywords" content="générateur de code QR, QR code gratuit, créer un QR code, QR code personnalisé, QR code entreprise">
+  <meta name="author" content="Benian Francklin">
+  <meta name="robots" content="index, follow">
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="BNIAN Générateur de Code QR - Créez des QR Codes personnalisés">
+  <meta property="og:description" content="Créez des QR codes personnalisés avec notre générateur gratuit.">
+  <meta property="og:image" content="https://benianfrancklin.com/images/qr-generator-thumbnail.png">
+  <meta property="og:url" content="https://benianfrancklin.com/qr-code-app">
+  <meta property="og:type" content="website">
+   <!-- Twitter Card Meta Tags -->
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="BF Générateur de Code QR - Créez des QR Codes personnalisés">
+   <meta name="twitter:description" content="Créez des QR codes personnalisés pour votre entreprise ou site web. Rapide et facile à utiliser.">
+   <meta name="twitter:image" content="https://benianfrancklin.com/images/qr-generator-thumbnail.png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.10/firebase-app-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.6.10/firebase-database-compat.min.js"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+  <style>
+    :root {
+      --primary-color: #00ffff;
+      --secondary-color: #ff00ff;
+      --background-color: #0a0a0a;
+      --text-color: #e0e0e0;
+      --neon-glow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 30px var(--primary-color);
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      background-image: 
+        linear-gradient(45deg, #1a1a1a 25%, transparent 25%),
+        linear-gradient(-45deg, #1a1a1a 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #1a1a1a 75%),
+        linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    .container {
+      background-color: rgba(20, 20, 20, 0.8);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      text-shadow: var(--neon-glow);
+    }
+    #qrcode {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
+      background-color: white;
+      padding: 1rem;
+      border-radius: 10px;
+      position: relative;
+    }
+    #qrcode img {
+      max-width: 100%;
+      height: auto;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: var(--secondary-color);
+      text-shadow: 0 0 5px var(--secondary-color);
+    }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--primary-color);
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: var(--text-color);
+    }
+    input:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 10px var(--primary-color);
+    }
+    .color-picker {
+      display: flex;
+      align-items: center;
+    }
+    .color-preview {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-left: 10px;
+      border: 1px solid var(--primary-color);
+      box-shadow: 0 0 10px var(--primary-color);
+    }
+    #generateBtn, #downloadBtn {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--primary-color);
+      color: var(--background-color);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      transition: all 0.3s ease;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    #generateBtn:hover, #downloadBtn:hover {
+      background-color: var(--secondary-color);
+      box-shadow: 0 0 20px var(--secondary-color);
+    }
+    #scanCounter {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 1.5rem;
+      color: var(--secondary-color);
+      font-weight: bold;
+      text-shadow: 0 0 5px var(--secondary-color);
+    }
+    .icon-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 0.5rem;
+    }
+    .icon-option {
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--text-color);
+    }
+    .icon-option:hover, .icon-option.selected {
+      color: var(--primary-color);
+      text-shadow: 0 0 10px var(--primary-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BF Générateur de Code QR</h1>
+    <div id="qrcode"></div>
+    <div class="form-group">
+      <label for="qrText">Contenu du code QR :</label>
+      <input type="text" id="qrText" value="https://benianfrancklin.com">
+    </div>
+    <div class="form-group">
+      <label for="qrSize">Taille du code QR :</label>
+      <input type="range" id="qrSize" value="200" min="100" max="400" step="10">
+      <span id="sizeValue">200x200</span>
+    </div>
+    <div class="form-group">
+      <label for="qrColor">Couleur du code QR :</label>
+      <div class="color-picker">
+        <input type="color" id="qrColor" value="#000000">
+        <div class="color-preview" id="colorPreview"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="qrShape">Forme du code QR :</label>
+      <select id="qrShape">
+        <option value="square">Carré</option>
+        <option value="circle">Cercle</option>
+        <option value="rounded">Arrondi</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Icône :</label>
+      <div class="icon-selector">
+        <i class="icon-option fas fa-user" data-icon="user"></i>
+        <i class="icon-option fas fa-home" data-icon="home"></i>
+        <i class="icon-option fas fa-envelope" data-icon="envelope"></i>
+        <i class="icon-option fas fa-phone" data-icon="phone"></i>
+        <i class="icon-option fas fa-link" data-icon="link"></i>
+      </div>
+    </div>
+    <button id="generateBtn">Générer le Code QR</button>
+    <button id="downloadBtn">Télécharger le Code QR</button>
+    <div id="scanCounter">Scans : 0</div>
+  </div>
+
+  <script>
+    // Initialiser Firebase (Remplacez par votre configuration Firebase)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "your-app.firebaseapp.com",
+      databaseURL: "https://your-app.firebaseio.com",
+      projectId: "your-project-id",
+      storageBucket: "your-app.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const database = firebase.database();
+    const scanCountRef = database.ref('scanCount');
+
+    let qrcode = null;
+    let selectedIcon = null;
+
+    function generateQRCode() {
+      const text = document.getElementById('qrText').value;
+      const size = parseInt(document.getElementById('qrSize').value);
+      const color = document.getElementById('qrColor').value;
+      const shape = document.getElementById('qrShape').value;
+
+      // Effacer le code QR précédent
+      const qrcodeElement = document.getElementById('qrcode');
+      qrcodeElement.innerHTML = '';
+
+      qrcode = new QRCode(qrcodeElement, {
+        text: text,
+        width: size,
+        height: size,
+        colorDark: color,
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      // Appliquer les styles de forme
+      setTimeout(() => {
+        const qrImage = qrcodeElement.querySelector('img');
+        if (qrImage) {
+          switch (shape) {
+            case 'circle':
+              qrImage.style.borderRadius = '50%';
+              break;
+            case 'rounded':
+              qrImage.style.borderRadius = '15%';
+              break;
+            default:
+              qrImage.style.borderRadius = '0';
+          }
+        }
+
+        // Ajouter une icône si sélectionnée
+        if (selectedIcon) {
+          const iconOverlay = document.createElement('div');
+          iconOverlay.innerHTML = `<i class="fas fa-${selectedIcon}" style="font-size: ${size * 0.2}px; color: ${color};"></i>`;
+          iconOverlay.style.position = 'absolute';
+          iconOverlay.style.top = '50%';
+          iconOverlay.style.left = '50%';
+          iconOverlay.style.transform = 'translate(-50%, -50%)';
+          iconOverlay.style.backgroundColor = 'white';
+          iconOverlay.style.padding = `${size * 0.05}px`;
+          iconOverlay.style.borderRadius = '50%';
+          qrcodeElement.style.position = 'relative';
+          qrcodeElement.appendChild(iconOverlay);
+        }
+      }, 50);
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', generateQRCode);
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const qrImage = document.getElementById('qrcode').querySelector('img');
+      if (qrImage) {
+        const dataURL = qrImage.src;
+        const downloadLink = document.createElement('a');
+        downloadLink.href = dataURL;
+        downloadLink.download = 'qr-code.png';
+        downloadLink.click();
+      } else {
+        alert('Veuillez générer un code QR avant de le télécharger.');
+      }
+    });
+
+    document.getElementById('qrSize').addEventListener('input', (e) => {
+      document.getElementById('sizeValue').textContent = `${e.target.value}x${e.target.value}`;
+    });
+
+    document.getElementById('qrColor').addEventListener('input', (e) => {
+      document.getElementById('colorPreview').style.backgroundColor = e.target.value;
+    });
+
+    document.querySelectorAll('.icon-option').forEach(icon => {
+      icon.addEventListener('click', (e) => {
+        document.querySelectorAll('.icon-option').forEach(i => i.classList.remove('selected'));
+        e.target.classList.add('selected');
+        selectedIcon = e.target.dataset.icon;
+      });
+    });
+
+    // Initialiser le code QR au chargement de la page
+    generateQRCode();
+
+    // Écouter les modifications du compteur de scans
+    scanCountRef.on('value', (snapshot) => {
+      const count = snapshot.val() || 0;
+      document.getElementById('scanCounter').textContent = `Scans : ${count}`;
+    });
+  </script>
+</body>
+</html>
